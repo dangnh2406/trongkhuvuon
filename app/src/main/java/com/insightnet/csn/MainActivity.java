@@ -1,5 +1,6 @@
 package com.insightnet.csn;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -12,6 +13,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
@@ -21,14 +23,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView
+        .OnNavigationItemSelectedListener {
     private WebView mywebview;
     private static final int INPUT_FILE_REQUEST_CODE = 1;
     private static final int FILECHOOSER_RESULTCODE = 1;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private String mCameraPhotoPath;
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private BottomNavigationView bottomNavigationView;
 
 
 
@@ -101,10 +105,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mywebview = (WebView) findViewById(R.id.webview);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+
+        bottomNavigationView
+                .setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.id_home);
 
         WebSettings  webSettings = mywebview.getSettings();
 
-        mywebview.loadUrl("https://trongkhuvuon.com");
+        mywebview.loadUrl("https://trongkhuvuon.com/shop");
         mywebview.setWebViewClient(new myWebClient());
         mywebview.setWebChromeClient(new ChromeClient());
 
@@ -116,14 +125,7 @@ public class MainActivity extends AppCompatActivity {
         else if(Build.VERSION.SDK_INT >=11 && Build.VERSION.SDK_INT < 19) {
             mywebview.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
-
-
-
     }//On Create End
-
-
-
-
 
     @Override
     public  void onBackPressed()
@@ -156,7 +158,30 @@ public class MainActivity extends AppCompatActivity {
         return imageFile;
     }
 
-    public class ChromeClient extends WebChromeClient {
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.id_home:
+                mywebview.loadUrl("https://trongkhuvuon.com/shop");
+                return true;
+
+            case R.id.id_category:
+                mywebview.loadUrl("https://trongkhuvuon.com");
+                return true;
+
+            case R.id.id_persion:
+
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        super.onPointerCaptureChanged(hasCapture);
+    }
+
+public class ChromeClient extends WebChromeClient {
         // For Android 5.0
         public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> filePath, WebChromeClient.FileChooserParams fileChooserParams) {
             // Double check that we don't have any existing callbacks
@@ -266,20 +291,5 @@ public class MainActivity extends AppCompatActivity {
             startActivity( intent );
             return true;
         }
-
-
-
-
-
-
-
-
-
-
-
     }
-
-
-
-
 }
